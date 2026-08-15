@@ -1,0 +1,2373 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Nuestro Universo</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            overflow: hidden;
+
+            background: #000;
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+        }
+
+
+        #contenedor {
+
+            width: 100vw;
+            height: 100vh;
+
+        }
+
+
+        /* ========================================
+           TITULO
+        ======================================== */
+
+        #titulo {
+
+            position: fixed;
+
+            top: 35px;
+
+            left: 0;
+
+            width: 100%;
+
+            text-align: center;
+
+            color: white;
+
+            z-index: 10;
+
+            pointer-events: none;
+
+            text-shadow:
+
+                0 0 10px white,
+                0 0 25px #7777ff,
+                0 0 50px #5555ff;
+
+        }
+
+
+        #titulo h1 {
+
+            font-family: Arial, sans-serif;
+
+            font-size: 30px;
+
+            font-weight: 300;
+
+            letter-spacing: 8px;
+
+        }
+
+
+        #titulo p {
+
+            margin-top: 10px;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 13px;
+
+            opacity: .7;
+
+            letter-spacing: 3px;
+
+        }
+
+
+        /* ========================================
+           AYUDA
+        ======================================== */
+
+        #ayuda {
+
+            position: fixed;
+
+            right: 20px;
+
+            bottom: 20px;
+
+            color: white;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 11px;
+
+            opacity: .45;
+
+            z-index: 10;
+
+        }
+
+
+        /* ========================================
+           MENSAJE / SOBRE
+        ======================================== */
+
+        #mensajePantalla {
+
+            position: fixed;
+
+            inset: 0;
+
+            background:
+
+                radial-gradient(
+                    circle at center,
+                    rgba(45, 35, 100, .35),
+                    rgba(0, 0, 10, .96)
+                );
+
+            backdrop-filter: blur(15px);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            z-index: 100;
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            transition:
+
+                opacity .5s ease,
+                visibility .5s ease;
+
+        }
+
+
+        #mensajePantalla.visible {
+
+            opacity: 1;
+
+            visibility: visible;
+
+        }
+
+
+        /* ========================================
+           SOBRE
+        ======================================== */
+
+        .sobre {
+
+            position: relative;
+
+            width: min(650px, 88vw);
+
+            min-height: 400px;
+
+            padding: 70px 55px 55px;
+
+            background:
+
+                linear-gradient(
+                    145deg,
+                    #f8f2e8,
+                    #e9dcc8
+                );
+
+            color: #292338;
+
+            border-radius: 8px;
+
+            box-shadow:
+
+                0 0 30px rgba(255,255,255,.15),
+                0 0 100px rgba(100,80,255,.25);
+
+            transform:
+
+                scale(.4)
+                rotateX(35deg);
+
+            opacity: 0;
+
+            transition:
+
+                transform .8s cubic-bezier(.2,.8,.2,1),
+                opacity .6s ease;
+
+        }
+
+
+        #mensajePantalla.visible .sobre {
+
+            transform:
+
+                scale(1)
+                rotateX(0deg);
+
+            opacity: 1;
+
+        }
+
+
+        /* ========================================
+           PAPEL
+        ======================================== */
+
+        .papel {
+
+            text-align: center;
+
+        }
+
+
+        .papel .pequeno {
+
+            font-family: Arial, sans-serif;
+
+            font-size: 12px;
+
+            letter-spacing: 4px;
+
+            color: #766b82;
+
+            text-transform: uppercase;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .papel h2 {
+
+            font-size: 32px;
+
+            font-weight: normal;
+
+            margin-bottom: 30px;
+
+            color: #403353;
+
+        }
+
+
+        .papel p {
+
+            font-size: 23px;
+
+            line-height: 1.7;
+
+        }
+
+
+        /* ========================================
+           SELLO
+        ======================================== */
+
+        .sello {
+
+            position: absolute;
+
+            top: 25px;
+
+            right: 30px;
+
+            width: 55px;
+
+            height: 55px;
+
+            border-radius: 50%;
+
+            background: #6c58a8;
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 22px;
+
+            box-shadow:
+
+                0 5px 15px rgba(0,0,0,.2);
+
+        }
+
+
+        /* ========================================
+           BOTON
+        ======================================== */
+
+        #cerrarMensaje {
+
+            position: absolute;
+
+            top: 20px;
+
+            left: 25px;
+
+            width: 35px;
+
+            height: 35px;
+
+            border: none;
+
+            border-radius: 50%;
+
+            background: rgba(50,40,70,.1);
+
+            color: #4a4058;
+
+            font-size: 20px;
+
+            cursor: pointer;
+
+        }
+
+
+        #cerrarMensaje:hover {
+
+            background: rgba(50,40,70,.2);
+
+        }
+
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+
+        @media (max-width: 600px) {
+
+            #titulo {
+
+                top: 22px;
+
+            }
+
+
+            #titulo h1 {
+
+                font-size: 20px;
+
+                letter-spacing: 5px;
+
+            }
+
+
+            #titulo p {
+
+                font-size: 10px;
+
+            }
+
+
+            .sobre {
+
+                padding: 65px 28px 40px;
+
+                min-height: 350px;
+
+            }
+
+
+            .papel h2 {
+
+                font-size: 25px;
+
+            }
+
+
+            .papel p {
+
+                font-size: 19px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div id="contenedor"></div>
+
+
+<div id="titulo">
+
+    <h1>NUESTRO UNIVERSO</h1>
+
+    <p>
+        Entre millones de estrellas,
+        siempre te encontraría a ti
+    </p>
+
+</div>
+
+
+<div id="ayuda">
+
+    Arrastra para explorar ·
+    Acerca o aleja ·
+    Toca las estrellas ✦
+
+</div>
+
+
+<!-- ========================================
+     SOBRE
+======================================== -->
+
+<div id="mensajePantalla">
+
+    <div class="sobre">
+
+        <button id="cerrarMensaje">
+            ×
+        </button>
+
+        <div class="sello">
+            ♥
+        </div>
+
+        <div class="papel">
+
+            <div class="pequeno">
+                Un mensaje para ti
+            </div>
+
+            <h2>
+                Desde mi universo
+            </h2>
+
+            <p id="textoMensaje">
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================
+     THREE.JS
+======================================== -->
+
+<script type="importmap">
+
+{
+    "imports": {
+
+        "three":
+        "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+
+        "three/addons/":
+        "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+
+    }
+}
+
+</script>
+
+
+
+<script type="module">
+
+
+import * as THREE from "three";
+
+import {
+    OrbitControls
+}
+from
+"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js";
+
+
+
+/* ========================================
+   ESCENA
+======================================== */
+
+
+const escena =
+    new THREE.Scene();
+
+
+escena.background =
+    new THREE.Color(0x000005);
+
+
+escena.fog =
+    new THREE.FogExp2(
+        0x000005,
+        0.0007
+    );
+
+
+
+/* ========================================
+   CÁMARA
+======================================== */
+
+
+const camara =
+    new THREE.PerspectiveCamera(
+
+        60,
+
+        window.innerWidth /
+        window.innerHeight,
+
+        .1,
+
+        5000
+
+    );
+
+
+camara.position.set(
+    0,
+    170,
+    650
+);
+
+
+
+/* ========================================
+   WEBGL
+======================================== */
+
+
+const renderer =
+    new THREE.WebGLRenderer({
+
+        antialias: true,
+
+        alpha: false
+
+    });
+
+
+renderer.setPixelRatio(
+
+    Math.min(
+        window.devicePixelRatio,
+        2
+    )
+
+);
+
+
+renderer.setSize(
+
+    window.innerWidth,
+    window.innerHeight
+
+);
+
+
+document
+    .getElementById("contenedor")
+    .appendChild(renderer.domElement);
+
+
+
+/* ========================================
+   CONTROLES 360
+======================================== */
+
+
+const controles =
+    new OrbitControls(
+        camara,
+        renderer.domElement
+    );
+
+
+controles.enableDamping = true;
+
+controles.dampingFactor = .035;
+
+controles.enablePan = false;
+
+controles.minDistance = 180;
+
+controles.maxDistance = 1200;
+
+controles.autoRotate = true;
+
+controles.autoRotateSpeed = .18;
+
+
+
+/* ========================================
+   LUZ CENTRAL
+======================================== */
+
+
+const luz =
+    new THREE.PointLight(
+        0xffffff,
+        7,
+        900
+    );
+
+
+escena.add(luz);
+
+
+
+/* ========================================
+   PLANETA
+======================================== */
+
+
+const texturaLoader =
+    new THREE.TextureLoader();
+
+
+let planeta;
+
+
+texturaLoader.load(
+
+    "fotos/planeta.jpg",
+
+    function(textura) {
+
+        const geometria =
+            new THREE.SphereGeometry(
+                70,
+                64,
+                64
+            );
+
+
+        const material =
+            new THREE.MeshStandardMaterial({
+
+                map: textura,
+
+                roughness: .75,
+
+                metalness: .1
+
+            });
+
+
+        planeta =
+            new THREE.Mesh(
+                geometria,
+                material
+            );
+
+
+        escena.add(planeta);
+
+    }
+
+);
+
+
+
+/* ========================================
+   ATMÓSFERA
+======================================== */
+
+
+const atmosfera =
+    new THREE.Mesh(
+
+        new THREE.SphereGeometry(
+            75,
+            64,
+            64
+        ),
+
+        new THREE.MeshBasicMaterial({
+
+            color: 0x6875ff,
+
+            transparent: true,
+
+            opacity: .13,
+
+            side: THREE.BackSide
+
+        })
+
+    );
+
+
+escena.add(atmosfera);
+
+
+
+/* ========================================
+   ANILLOS
+======================================== */
+
+
+const anillo =
+    new THREE.Mesh(
+
+        new THREE.RingGeometry(
+            100,
+            128,
+            160
+        ),
+
+        new THREE.MeshBasicMaterial({
+
+            color: 0xb5adff,
+
+            transparent: true,
+
+            opacity: .5,
+
+            side: THREE.DoubleSide
+
+        })
+
+    );
+
+
+anillo.rotation.x =
+    Math.PI / 2.4;
+
+
+escena.add(anillo);
+
+
+
+/* ========================================
+   ESTRELLAS DEL FONDO
+======================================== */
+
+
+const cantidadFondo =
+    8000;
+
+
+const posicionesFondo =
+    new Float32Array(
+        cantidadFondo * 3
+    );
+
+
+for (
+    let i = 0;
+    i < cantidadFondo;
+    i++
+) {
+
+    const radio =
+        900 +
+        Math.random() * 1800;
+
+
+    const theta =
+        Math.random() *
+        Math.PI * 2;
+
+
+    const phi =
+        Math.acos(
+            2 * Math.random() - 1
+        );
+
+
+    posicionesFondo[i * 3] =
+
+        radio *
+        Math.sin(phi) *
+        Math.cos(theta);
+
+
+    posicionesFondo[i * 3 + 1] =
+
+        radio *
+        Math.sin(phi) *
+        Math.sin(theta);
+
+
+    posicionesFondo[i * 3 + 2] =
+
+        radio *
+        Math.cos(phi);
+
+}
+
+
+const fondoGeometry =
+    new THREE.BufferGeometry();
+
+
+fondoGeometry.setAttribute(
+
+    "position",
+
+    new THREE.BufferAttribute(
+        posicionesFondo,
+        3
+    )
+
+);
+
+
+const fondoMaterial =
+    new THREE.PointsMaterial({
+
+        color: 0xffffff,
+
+        size: 1.8,
+
+        transparent: true,
+
+        opacity: .75
+
+    });
+
+
+const fondo =
+    new THREE.Points(
+
+        fondoGeometry,
+
+        fondoMaterial
+
+    );
+
+
+escena.add(fondo);
+
+
+
+/* ========================================
+   GALAXIA ESPIRAL
+======================================== */
+
+
+const galaxia =
+    new THREE.Group();
+
+
+escena.add(galaxia);
+
+
+const cantidadGalaxia =
+    4500;
+
+
+const posicionesGalaxia =
+    new Float32Array(
+        cantidadGalaxia * 3
+    );
+
+
+for (
+    let i = 0;
+    i < cantidadGalaxia;
+    i++
+) {
+
+    const radio =
+        Math.pow(
+            Math.random(),
+            .55
+        ) * 560;
+
+
+    const brazos = 5;
+
+
+    const brazo =
+        Math.floor(
+            Math.random() *
+            brazos
+        );
+
+
+    const angulo =
+
+        (brazo / brazos) *
+        Math.PI * 2 +
+
+        radio * .018;
+
+
+    const desviacion =
+        (Math.random() - .5) *
+        75;
+
+
+    posicionesGalaxia[i * 3] =
+
+        Math.cos(angulo) *
+        radio +
+
+        desviacion;
+
+
+    posicionesGalaxia[i * 3 + 1] =
+
+        (Math.random() - .5) *
+        45;
+
+
+    posicionesGalaxia[i * 3 + 2] =
+
+        Math.sin(angulo) *
+        radio +
+
+        desviacion;
+
+}
+
+
+const galaxiaGeometry =
+    new THREE.BufferGeometry();
+
+
+galaxiaGeometry.setAttribute(
+
+    "position",
+
+    new THREE.BufferAttribute(
+        posicionesGalaxia,
+        3
+    )
+
+);
+
+
+const galaxiaMaterial =
+    new THREE.PointsMaterial({
+
+        color: 0xaaaaff,
+
+        size: 2.4,
+
+        transparent: true,
+
+        opacity: .7
+
+    });
+
+
+const particulasGalaxia =
+    new THREE.Points(
+
+        galaxiaGeometry,
+
+        galaxiaMaterial
+
+    );
+
+
+galaxia.add(
+    particulasGalaxia
+);
+
+
+
+/* ========================================
+   TEXTURA DE HALO
+======================================== */
+
+
+function crearHalo() {
+
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
+
+
+    canvas.width = 128;
+
+    canvas.height = 128;
+
+
+    const contexto =
+        canvas.getContext("2d");
+
+
+    const gradiente =
+        contexto.createRadialGradient(
+
+            64,
+            64,
+            0,
+
+            64,
+            64,
+            64
+
+        );
+
+
+    gradiente.addColorStop(
+        0,
+        "rgba(255,255,255,1)"
+    );
+
+
+    gradiente.addColorStop(
+        .08,
+        "rgba(255,255,255,1)"
+    );
+
+
+    gradiente.addColorStop(
+        .25,
+        "rgba(180,190,255,.8)"
+    );
+
+
+    gradiente.addColorStop(
+        .55,
+        "rgba(100,110,255,.3)"
+    );
+
+
+    gradiente.addColorStop(
+        1,
+        "rgba(0,0,0,0)"
+    );
+
+
+    contexto.fillStyle =
+        gradiente;
+
+
+    contexto.fillRect(
+        0,
+        0,
+        128,
+        128
+    );
+
+
+    return new THREE.CanvasTexture(
+        canvas
+    );
+
+}
+
+
+const texturaHalo =
+    crearHalo();
+
+
+
+/* ========================================
+   FOTOS ORBITALES
+======================================== */
+
+
+const nombresFotos = [
+
+    "foto1.jpg",
+    "foto2.jpg",
+    "foto3.jpg",
+    "foto4.jpg",
+    "foto5.jpg",
+    "foto6.jpg"
+
+];
+
+
+/*
+    Cada fotografía tiene
+    una órbita diferente.
+
+    radio:
+    distancia respecto al centro.
+
+    altura:
+    posición vertical.
+
+    velocidad:
+    velocidad de movimiento.
+
+    inclinacion:
+    inclinación de su trayectoria.
+
+    escala:
+    tamaño de la fotografía.
+*/
+
+
+const datosFotos = [
+
+    {
+        radio: 300,
+        altura: 120,
+        velocidad: .0018,
+        inclinacion: .15,
+        escala: 1.00
+    },
+
+    {
+        radio: 420,
+        altura: -80,
+        velocidad: .0011,
+        inclinacion: -.25,
+        escala: .90
+    },
+
+    {
+        radio: 560,
+        altura: 180,
+        velocidad: .0008,
+        inclinacion: .35,
+        escala: .82
+    },
+
+    {
+        radio: 700,
+        altura: -160,
+        velocidad: .0006,
+        inclinacion: -.40,
+        escala: .75
+    },
+
+    {
+        radio: 350,
+        altura: -200,
+        velocidad: .0015,
+        inclinacion: .50,
+        escala: .95
+    },
+
+    {
+        radio: 480,
+        altura: 230,
+        velocidad: .0010,
+        inclinacion: -.15,
+        escala: .85
+    },
+
+    {
+        radio: 620,
+        altura: 40,
+        velocidad: .0007,
+        inclinacion: .30,
+        escala: .80
+    },
+
+    {
+        radio: 760,
+        altura: -100,
+        velocidad: .0005,
+        inclinacion: -.30,
+        escala: .70
+    },
+
+    {
+        radio: 280,
+        altura: 260,
+        velocidad: .0020,
+        inclinacion: .20,
+        escala: 1.05
+    },
+
+    {
+        radio: 530,
+        altura: -250,
+        velocidad: .0009,
+        inclinacion: -.45,
+        escala: .82
+    },
+
+    {
+        radio: 680,
+        altura: 220,
+        velocidad: .0006,
+        inclinacion: .25,
+        escala: .72
+    },
+
+    {
+        radio: 820,
+        altura: -220,
+        velocidad: .0004,
+        inclinacion: -.20,
+        escala: .65
+    },
+
+    {
+        radio: 390,
+        altura: 300,
+        velocidad: .0013,
+        inclinacion: .40,
+        escala: .92
+    },
+
+    {
+        radio: 580,
+        altura: -300,
+        velocidad: .0008,
+        inclinacion: -.35,
+        escala: .78
+    },
+
+    {
+        radio: 730,
+        altura: 280,
+        velocidad: .0005,
+        inclinacion: .30,
+        escala: .68
+    },
+
+    {
+        radio: 450,
+        altura: 100,
+        velocidad: .0011,
+        inclinacion: -.50,
+        escala: .88
+    },
+
+    {
+        radio: 650,
+        altura: -40,
+        velocidad: .0007,
+        inclinacion: .15,
+        escala: .76
+    },
+
+    {
+        radio: 850,
+        altura: 150,
+        velocidad: .0004,
+        inclinacion: -.25,
+        escala: .62
+    },
+
+    {
+        radio: 320,
+        altura: -120,
+        velocidad: .0017,
+        inclinacion: .45,
+        escala: .98
+    },
+
+    {
+        radio: 500,
+        altura: 260,
+        velocidad: .0009,
+        inclinacion: -.30,
+        escala: .84
+    }
+
+];
+
+
+const grupoFotos =
+    new THREE.Group();
+
+
+escena.add(
+    grupoFotos
+);
+
+
+const fotosObjetos = [];
+
+
+
+/* ========================================
+   CREAR FOTOS
+======================================== */
+
+
+datosFotos.forEach(
+
+    (datos, indice) => {
+
+
+        const archivo =
+            nombresFotos[
+                indice %
+                nombresFotos.length
+            ];
+
+
+        const textura =
+            texturaLoader.load(
+                "fotos/" + archivo
+            );
+
+
+        const grupo =
+            new THREE.Group();
+
+
+        /*
+            Posición angular inicial.
+        */
+
+        grupo.userData.angulo =
+            Math.random() *
+            Math.PI * 2;
+
+
+        grupo.userData.radio =
+            datos.radio;
+
+
+        grupo.userData.altura =
+            datos.altura;
+
+
+        grupo.userData.velocidad =
+            datos.velocidad;
+
+
+        grupo.userData.inclinacion =
+            datos.inclinacion;
+
+
+        grupo.userData.indice =
+            indice;
+
+
+        grupo.scale.setScalar(
+            datos.escala
+        );
+
+
+
+        /* ========================================
+           FOTO
+        ======================================== */
+
+
+        const geometria =
+            new THREE.PlaneGeometry(
+                78,
+                78
+            );
+
+
+        const material =
+            new THREE.MeshBasicMaterial({
+
+                map: textura,
+
+                side:
+                    THREE.DoubleSide,
+
+                transparent:
+                    true,
+
+                opacity:
+                    .96
+
+            });
+
+
+        const foto =
+            new THREE.Mesh(
+
+                geometria,
+
+                material
+
+            );
+
+
+        grupo.add(
+            foto
+        );
+
+
+
+        /* ========================================
+           HALO
+        ======================================== */
+
+
+        const halo =
+            new THREE.Sprite(
+
+                new THREE.SpriteMaterial({
+
+                    map:
+                        texturaHalo,
+
+                    color:
+                        0x8994ff,
+
+                    transparent:
+                        true,
+
+                    opacity:
+                        .12,
+
+                    blending:
+                        THREE.AdditiveBlending,
+
+                    depthWrite:
+                        false
+
+                })
+
+            );
+
+
+        halo.scale.set(
+            100,
+            100,
+            1
+        );
+
+
+        grupo.add(
+            halo
+        );
+
+
+        grupo.userData.foto =
+            foto;
+
+
+        grupo.userData.halo =
+            halo;
+
+
+        grupoFotos.add(
+            grupo
+        );
+
+
+        fotosObjetos.push(
+            grupo
+        );
+
+    }
+
+);
+
+
+
+/* ========================================
+   ESTRELLAS ESPECIALES
+======================================== */
+
+
+const recuerdos = [
+
+    "Desde que llegaste, mi universo cambió.",
+
+    "Entre millones de estrellas, siempre te elegiría a ti.",
+
+    "Mi lugar favorito siempre termina siendo contigo.",
+
+    "Contigo hasta los días normales se vuelven recuerdos.",
+
+    "Gracias por formar parte de mi universo.",
+
+    "Me gusta imaginar todos los lugares que todavía nos faltan conocer.",
+
+    "Si pudiera guardar un momento para siempre, sería uno contigo.",
+
+    "Hay recuerdos que brillan más que cualquier estrella.",
+
+    "No necesito encontrar otro universo si ya encontré el mío contigo.",
+
+    "Ojalá pudiéramos volver a vivir nuestros mejores días una y otra vez.",
+
+    "Cada momento contigo se convirtió en una pequeña parte de mi universo.",
+
+    "No sé qué nos espera más adelante, pero quiero descubrirlo contigo.",
+
+    "De todas las coincidencias de la vida, conocerte fue mi favorita.",
+
+    "A veces miro las estrellas y pienso en lo increíble que fue encontrarte.",
+
+    "Si nuestra historia fuera una galaxia, todavía estaría naciendo.",
+
+    "Gracias por todos esos momentos que probablemente nunca olvidaré.",
+
+    "Mi universo tiene millones de puntos de luz, pero tú siempre destacas.",
+
+    "Y todavía nos quedan muchas estrellas por descubrir."
+
+];
+
+
+const posicionesEstrellas = [
+
+    [-250, 90, 130],
+
+    [-170, 190, -180],
+
+    [-50, 110, 330],
+
+    [120, 160, -280],
+
+    [250, 100, 180],
+
+    [320, 0, -120],
+
+    [260, -130, 260],
+
+    [80, -170, -320],
+
+    [-100, -200, 270],
+
+    [-270, -140, -220],
+
+    [-350, 50, 40],
+
+    [-320, 220, 100],
+
+    [-80, 300, 150],
+
+    [100, 270, -170],
+
+    [230, 220, 30],
+
+    [370, 120, -250],
+
+    [380, -100, -80],
+
+    [-380, -80, 180]
+
+];
+
+
+const estrellasEspeciales = [];
+
+
+
+/* ========================================
+   CREAR ESTRELLAS
+======================================== */
+
+
+posicionesEstrellas.forEach(
+
+    (posicion, indice) => {
+
+
+        const grupo =
+            new THREE.Group();
+
+
+        grupo.position.set(
+
+            posicion[0],
+            posicion[1],
+            posicion[2]
+
+        );
+
+
+        grupo.userData.texto =
+            recuerdos[indice];
+
+
+        grupo.userData.indice =
+            indice;
+
+
+
+        /* ========================================
+           HALO
+        ======================================== */
+
+
+        const halo =
+            new THREE.Sprite(
+
+                new THREE.SpriteMaterial({
+
+                    map:
+                        texturaHalo,
+
+                    color:
+                        0x9ea8ff,
+
+                    transparent:
+                        true,
+
+                    opacity:
+                        .95,
+
+                    blending:
+                        THREE.AdditiveBlending,
+
+                    depthWrite:
+                        false
+
+                })
+
+            );
+
+
+        halo.scale.set(
+            45,
+            45,
+            1
+        );
+
+
+        grupo.add(
+            halo
+        );
+
+
+
+        /* ========================================
+           NÚCLEO
+        ======================================== */
+
+
+        const nucleo =
+            new THREE.Mesh(
+
+                new THREE.SphereGeometry(
+                    5,
+                    16,
+                    16
+                ),
+
+                new THREE.MeshBasicMaterial({
+
+                    color:
+                        0xffffff
+
+                })
+
+            );
+
+
+        grupo.add(
+            nucleo
+        );
+
+
+
+        /* ========================================
+           CRUZ DE LUZ
+        ======================================== */
+
+
+        const materialCruz =
+            new THREE.LineBasicMaterial({
+
+                color:
+                    0xffffff,
+
+                transparent:
+                    true,
+
+                opacity:
+                    .8
+
+            });
+
+
+        const puntosCruz = [
+
+            new THREE.Vector3(
+                -16,
+                0,
+                0
+            ),
+
+            new THREE.Vector3(
+                16,
+                0,
+                0
+            ),
+
+            new THREE.Vector3(
+                0,
+                -16,
+                0
+            ),
+
+            new THREE.Vector3(
+                0,
+                16,
+                0
+            )
+
+        ];
+
+
+        const geometriaCruz =
+            new THREE.BufferGeometry()
+                .setFromPoints(
+                    puntosCruz
+                );
+
+
+        const cruz =
+            new THREE.LineSegments(
+
+                geometriaCruz,
+
+                materialCruz
+
+            );
+
+
+        grupo.add(
+            cruz
+        );
+
+
+
+        /* ========================================
+           DATOS
+        ======================================== */
+
+
+        grupo.userData.halo =
+            halo;
+
+
+        grupo.userData.nucleo =
+            nucleo;
+
+
+        grupo.userData.cruz =
+            cruz;
+
+
+        grupo.userData.base =
+            1;
+
+
+        galaxia.add(
+            grupo
+        );
+
+
+        estrellasEspeciales.push(
+            grupo
+        );
+
+    }
+
+);
+
+
+
+/* ========================================
+   RAYCASTER
+======================================== */
+
+
+const raycaster =
+    new THREE.Raycaster();
+
+
+const mouse =
+    new THREE.Vector2();
+
+
+function obtenerMouse(event) {
+
+    mouse.x =
+
+        (event.clientX /
+        window.innerWidth) *
+        2 - 1;
+
+
+    mouse.y =
+
+        -(event.clientY /
+        window.innerHeight) *
+        2 + 1;
+
+}
+
+
+
+/* ========================================
+   ABRIR MENSAJE
+======================================== */
+
+
+const pantallaMensaje =
+    document.getElementById(
+        "mensajePantalla"
+    );
+
+
+const textoMensaje =
+    document.getElementById(
+        "textoMensaje"
+    );
+
+
+function abrirMensaje(texto) {
+
+    textoMensaje.innerText =
+        texto;
+
+
+    pantallaMensaje.classList.add(
+        "visible"
+    );
+
+
+    controles.enabled =
+        false;
+
+}
+
+
+
+/* ========================================
+   CLIC / TOQUE
+======================================== */
+
+
+renderer.domElement.addEventListener(
+
+    "pointerdown",
+
+    function(event) {
+
+
+        obtenerMouse(event);
+
+
+        raycaster.setFromCamera(
+
+            mouse,
+
+            camara
+
+        );
+
+
+        const objetos =
+            raycaster.intersectObjects(
+
+                estrellasEspeciales,
+
+                true
+
+            );
+
+
+        if (
+            objetos.length > 0
+        ) {
+
+
+            let estrella =
+                objetos[0].object;
+
+
+            /*
+                Buscamos el grupo padre
+                que contiene el mensaje.
+            */
+
+            while (
+
+                estrella.parent &&
+
+                !estrella.userData.texto
+
+            ) {
+
+                estrella =
+                    estrella.parent;
+
+            }
+
+
+            if (
+                estrella.userData.texto
+            ) {
+
+                abrirMensaje(
+
+                    estrella.userData.texto
+
+                );
+
+            }
+
+        }
+
+    }
+
+);
+
+
+
+/* ========================================
+   CERRAR MENSAJE
+======================================== */
+
+
+document
+    .getElementById(
+        "cerrarMensaje"
+    )
+    .addEventListener(
+
+        "click",
+
+        function() {
+
+            pantallaMensaje
+                .classList
+                .remove(
+                    "visible"
+                );
+
+
+            controles.enabled =
+                true;
+
+        }
+
+    );
+
+
+
+/* ========================================
+   ESC PARA CERRAR
+======================================== */
+
+
+window.addEventListener(
+
+    "keydown",
+
+    function(event) {
+
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            pantallaMensaje
+                .classList
+                .remove(
+                    "visible"
+                );
+
+
+            controles.enabled =
+                true;
+
+        }
+
+    }
+
+);
+
+
+
+/* ========================================
+   ANIMACIÓN
+======================================== */
+
+
+const reloj =
+    new THREE.Clock();
+
+
+function animar() {
+
+
+    requestAnimationFrame(
+        animar
+    );
+
+
+    const tiempo =
+        reloj.getElapsedTime();
+
+
+
+    /* ========================================
+       PLANETA
+    ======================================== */
+
+
+    if (planeta) {
+
+        planeta.rotation.y =
+            tiempo * .08;
+
+    }
+
+
+
+    /* ========================================
+       ATMÓSFERA
+    ======================================== */
+
+
+    const escalaAtmosfera =
+
+        1 +
+
+        Math.sin(
+            tiempo * 1.3
+        ) *
+
+        .018;
+
+
+    atmosfera.scale.setScalar(
+        escalaAtmosfera
+    );
+
+
+
+    /* ========================================
+       ANILLO
+    ======================================== */
+
+
+    anillo.rotation.z =
+        tiempo * .12;
+
+
+
+    /* ========================================
+       GALAXIA
+    ======================================== */
+
+
+    galaxia.rotation.y =
+        tiempo * .018;
+
+
+    particulasGalaxia.rotation.y =
+        tiempo * .006;
+
+
+    fondo.rotation.y =
+        tiempo * .0015;
+
+
+
+    /* ========================================
+       FOTOS ORBITALES
+    ======================================== */
+
+
+    fotosObjetos.forEach(
+
+        (foto, indice) => {
+
+
+            /*
+                Cada foto tiene
+                su propia velocidad.
+            */
+
+            foto.userData.angulo +=
+                foto.userData.velocidad;
+
+
+            const angulo =
+                foto.userData.angulo;
+
+
+            const radio =
+                foto.userData.radio;
+
+
+            /*
+                Movimiento circular
+                en el plano X/Z.
+            */
+
+            const x =
+
+                Math.cos(angulo) *
+                radio;
+
+
+            const z =
+
+                Math.sin(angulo) *
+                radio;
+
+
+            /*
+                Movimiento vertical.
+
+                Esto evita que todas las fotos
+                estén en un mismo plano.
+            */
+
+            const y =
+
+                foto.userData.altura +
+
+                Math.sin(
+                    angulo
+                ) *
+
+                radio *
+
+                .12 *
+
+                Math.sin(
+                    foto.userData.inclinacion
+                );
+
+
+            /*
+                Nueva posición.
+            */
+
+            foto.position.set(
+
+                x,
+                y,
+                z
+
+            );
+
+
+            /*
+                Rotación suave.
+            */
+
+            foto.rotation.z =
+
+                Math.sin(
+
+                    tiempo * .35 +
+                    indice
+
+                ) *
+
+                .06;
+
+
+            /*
+                Las fotos siempre miran
+                hacia la cámara.
+            */
+
+            foto.lookAt(
+                camara.position
+            );
+
+
+
+            /* ========================================
+               HALO DE LA FOTO
+            ======================================== */
+
+
+            const pulso =
+
+                1 +
+
+                Math.sin(
+
+                    tiempo * 1.2 +
+                    indice
+
+                ) *
+
+                .06;
+
+
+            foto.userData.halo
+                .scale.set(
+
+                    100 * pulso,
+
+                    100 * pulso,
+
+                    1
+
+                );
+
+
+            foto.userData.halo
+                .material
+                .opacity =
+
+                .10 +
+
+                Math.sin(
+
+                    tiempo * 1.2 +
+                    indice
+
+                ) *
+
+                .025;
+
+        }
+
+    );
+
+
+
+    /* ========================================
+       ESTRELLAS ESPECIALES
+    ======================================== */
+
+
+    estrellasEspeciales.forEach(
+
+        (estrella, indice) => {
+
+
+            const pulso =
+
+                1 +
+
+                Math.sin(
+
+                    tiempo * 2.2 +
+                    indice
+
+                ) *
+
+                .18;
+
+
+            estrella.userData.halo
+                .scale.set(
+
+                    45 * pulso,
+
+                    45 * pulso,
+
+                    1
+
+                );
+
+
+            estrella.userData.nucleo
+                .scale.setScalar(
+                    pulso
+                );
+
+
+            estrella.userData.cruz
+                .scale.setScalar(
+                    pulso
+                );
+
+
+            estrella.rotation.z =
+
+                tiempo *
+
+                (.2 + indice * .01);
+
+        }
+
+    );
+
+
+
+    /* ========================================
+       ACTUALIZAR CONTROLES
+    ======================================== */
+
+
+    controles.update();
+
+
+    renderer.render(
+
+        escena,
+
+        camara
+
+    );
+
+}
+
+
+animar();
+
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+
+window.addEventListener(
+
+    "resize",
+
+    function() {
+
+
+        camara.aspect =
+
+            window.innerWidth /
+            window.innerHeight;
+
+
+        camara.updateProjectionMatrix();
+
+
+        renderer.setSize(
+
+            window.innerWidth,
+            window.innerHeight
+
+        );
+
+    }
+
+);
+
+
+</script>
+
+</body>
+
+</html>
